@@ -13,7 +13,7 @@ A:
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
 A: 
-- Add the diagonal units to the `row + column  + square unit list`
+- Add the diagonal units to the `row + column  + square unit list` (A diagonal list should contain numbers 1 to 9)
 - Then apply the elimination and only_choice approach to solve sudoku
 
 ### Install
