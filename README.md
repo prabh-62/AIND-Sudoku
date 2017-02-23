@@ -4,10 +4,12 @@
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
 A: 
- - Study the row or column that requires minimum values to be filled in
+- Study the row or column that requires minimum values to be filled in
 - Search for the possibility of duplicate items(of length 2) that could be filled in interchangeably
 - Since, it is a naked twin, no other box can contain the same values
-- Now, remove these 2 values from the other boxes in the peer list 
+- Now, remove these 2 values from the other boxes in the peer list
+
+
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
 A: 

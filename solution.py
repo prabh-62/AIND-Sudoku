@@ -1,3 +1,5 @@
+import collections
+
 assignments = []
 rows = 'ABCDEFGHI'
 columns = '123456789'
@@ -25,11 +27,19 @@ def naked_twins(values):
 
     # Find all instances of naked twins
     for unit in unit_list:
-        possible_twins = [b for b in unit if len(values[b]) == 2]
+        possible_twins = [values[b] for b in unit if len(values[b]) == 2]
 
-        for box in unit:
-            if box not in possible_twins:
-                return values
+        counter = collections.Counter(possible_twins)
+        # Exact Twins if the count matches 2
+        twins = [key for key,value in counter.items() if value == 2]
+        for twin in twins:
+            for box in unit:
+                if values[box] != twin and len(values[box]) > 1:
+                    value = values[box]
+                    for n in twin:
+                        value = value.replace(n, '')
+                        assign_value(values, box, value)
+    return values
 
     # Eliminate the naked twins as possibilities for their peers
 
@@ -44,7 +54,13 @@ boxes = cross(rows,columns)
 row_units = [cross(r,columns) for r in rows]
 column_units = [cross(rows, c) for c in columns]
 square_units = [cross(rs,cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
-unit_list = row_units + column_units + square_units
+
+# Diagonal units [A1,B2..I9] and [A9,B8..I1]
+diagonal1 = [rs + cs for rs,cs in zip(rows,columns)]
+diagonal2 = [rs + cs for rs,cs in zip(rows,columns[::-1])]
+diagonal_units = [diagonal1, diagonal2]
+
+unit_list = row_units + column_units + square_units + diagonal_units
 
 units = dict((s, [u for u in unit_list if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[])) - {s}) for s in boxes)
@@ -85,15 +101,25 @@ def display(values):
 
 
 def eliminate(values):
-    solved_values = [box for box in values.keys()  if len(values[box]) == 1]
+    """
+    Go through all the boxes, and whenever there is a box with a value, eliminate this value from the values of all its peers.
+    Input: A sudoku in dictionary form.
+    Output: The resulting sudoku in dictionary form.
+    """
+    solved_values = [box for box in values.keys() if len(values[box]) == 1]
     for box in solved_values:
         digit = values[box]
         for peer in peers[box]:
-            values[box] = values[peer].replace(digit,'')
+            values[peer] = values[peer].replace(digit,'')
     return values
 
 
 def only_choice(values):
+    """
+    Go through all the units, and whenever there is a unit with a value that only fits in one box, assign the value to this box.
+    Input: A sudoku in dictionary form.
+    Output: The resulting sudoku in dictionary form.
+    """
     for unit in unit_list:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
